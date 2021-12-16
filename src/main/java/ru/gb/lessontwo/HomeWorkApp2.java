@@ -51,10 +51,7 @@ public class HomeWorkApp2 {
 
 //Задание 5. Написать метод, который определяет, является ли год високосным, и возвращает boolean (високосный - true, не високосный - false). Каждый 4-й год является високосным, кроме каждого 100-го, при этом каждый 400-й – високосный.
     static boolean calculateIfLeapYear (int year) {
-        if (year % 400 == 0) {
-            return true;
-        }
-        else if (year % 4 == 0 && year % 100 != 0) {
+        if (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) {
             return true;
         } else {
             return false;
