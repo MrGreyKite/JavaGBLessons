@@ -69,14 +69,45 @@ public class HomeWorkGame {
         return coordinates = new int[]{x, y};
     }
 
-    //ИскИн делает ход в случайную клетку вокруг клетки человека
+    //ИскИн делает ход с попыткой перехвата
     void AITurn(int[] coordinates) {
         int x, y;
-        do {
+        while (true) {
             x = RAND.nextInt(fieldSizeX);
             y = RAND.nextInt(fieldSizeY);
-        } while (!(isCellValid(x, y)));
-        System.out.println("Компьютер сделал ход в точку " + (x + 1) + ", " + (y + 1));
+
+            if (isCellValid(x, y)) {
+
+                gameField[y][x] = AI_DOT;
+                if (checkWinSimple(AI_DOT)) {
+                    gameField[y][x] = AI_DOT;
+                    System.out.println("Компьютер сделал ход в точку " + (x + 1) + ", " + (y + 1));
+                    break;
+                }
+
+                gameField[y][x] = HUMAN_DOT;
+                if (checkWinSimple(HUMAN_DOT)) {
+                    gameField[y][x] = AI_DOT;
+                    System.out.println("Компьютер сделал ход в точку " + (x + 1) + ", " + (y + 1));
+                    break;
+                }
+
+                if (
+                        x == (coordinates[0] - 1) + RAND.nextInt((coordinates[0] + 1) - (coordinates[0] - 1) + 1)
+                                &&
+                                y == (coordinates[1] - 1) + RAND.nextInt((coordinates[1] + 1) - (coordinates[1] - 1) + 1)
+                ) {
+                    gameField[y][x] = AI_DOT;
+                    System.out.println("Компьютер сделал ход в точку " + (x + 1) + ", " + (y + 1));
+                    break;
+                }
+
+                else
+                    gameField[y][x] = EMPTY_DOT;
+                    continue;
+
+            }
+        }
     }
 
     boolean isDraw() {
