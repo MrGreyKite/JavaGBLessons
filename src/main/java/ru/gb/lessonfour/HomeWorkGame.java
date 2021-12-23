@@ -11,7 +11,7 @@ import java.util.Scanner;
 
  @author RudolfBagmet
 
- @version 20.12.2021
+ @version 23.12.2021
 
  **/
 
@@ -20,7 +20,7 @@ public class HomeWorkGame {
     static final Scanner SCAN = new Scanner(System.in);
     static final Random RAND = new Random();
 
-    final int DOT_TO_WIN = 4;
+    final int DOT_TO_WIN = 3;
     final char HUMAN_DOT = 'X';
     final char AI_DOT = '0';
     final char EMPTY_DOT = '_';
@@ -69,7 +69,17 @@ public class HomeWorkGame {
         return coordinates = new int[]{x, y};
     }
 
-    //ИскИн делает ход с попыткой перехвата
+    void AITurnSimple() {
+        int x, y;
+        do {
+            x = RAND.nextInt(fieldSizeX);
+            y = RAND.nextInt(fieldSizeY);
+        } while (!isCellValid(x, y));
+        gameField[y][x] = AI_DOT;
+        System.out.println("Компьютер сделал ход в точку " + (x + 1) + ", " + (y + 1));
+    }
+
+    //ИскИн делает ход с попыткой перехвата; проверяется сначала возможность сделать выигрышный ход, потом перехват, потом ближайшие клетки
     void AITurn(int[] coordinates) {
         int x, y;
         while (true) {
@@ -104,7 +114,6 @@ public class HomeWorkGame {
 
                 else
                     gameField[y][x] = EMPTY_DOT;
-                    continue;
 
             }
         }
@@ -122,13 +131,13 @@ public class HomeWorkGame {
     //Простая проверка выигрыша для поля, размер которого равен длине выигрышной последовательности
 
     boolean checkDiagonalsSimple(char dot) {
-        boolean isDiagRight, isDiagLeft;
-        isDiagRight = isDiagLeft = true;
+        boolean isDiagonalRight, isDiagonalLeft;
+        isDiagonalRight = isDiagonalLeft = true;
         for (int i = 0; i < DOT_TO_WIN; i++) {
-            isDiagRight &= (gameField[i][i] == dot);
-            isDiagLeft &= (gameField[DOT_TO_WIN - 1 - i][i] == dot);
+            isDiagonalRight &= (gameField[i][i] == dot);
+            isDiagonalLeft &= (gameField[DOT_TO_WIN - 1 - i][i] == dot);
         }
-        return (isDiagRight || isDiagLeft);
+        return (isDiagonalRight || isDiagonalLeft);
     }
 
     boolean checkLinesSimple(char dot) {
@@ -150,23 +159,23 @@ public class HomeWorkGame {
 
     //Проверка выигрыша для поля произвольного размера: каждый раз проверяется квадрат "клеток" размера выигрышной последовательности,
 //и после проверки происходит смещение по полю, пока не будет достигнут край
-    boolean checkDiags(char dot, int shiftLeft, int shiftDown) {
-        boolean isDiagRight, isDiagLeft;
-        isDiagRight = isDiagLeft = true;
+    boolean checkDiagonals(char dot, int shiftLeft, int shiftDown) {
+        boolean isDiagonalRight, isDiagonalLeft;
+        isDiagonalRight = isDiagonalLeft = true;
         for (int i = 0; i < DOT_TO_WIN; i++) {
-            isDiagRight &= (gameField[i + shiftLeft][i + shiftDown] == dot);
-            isDiagLeft &= (gameField[DOT_TO_WIN - 1 - i + shiftLeft][i + shiftDown] == dot);
+            isDiagonalRight &= (gameField[i + shiftLeft][i + shiftDown] == dot);
+            isDiagonalLeft &= (gameField[DOT_TO_WIN - 1 - i + shiftLeft][i + shiftDown] == dot);
         }
-        return (isDiagRight || isDiagLeft);
+        return (isDiagonalRight || isDiagonalLeft);
     }
 
     boolean checkLines(char dot, int shiftLeft, int shiftDown) {
         boolean isColumn, isRow;
-        for (int ver = shiftLeft; ver < (DOT_TO_WIN + shiftLeft); ver++) {
+        for (int vertical = shiftLeft; vertical < (DOT_TO_WIN + shiftLeft); vertical++) {
             isColumn = isRow = true;
-            for (int gor = shiftDown; gor < (DOT_TO_WIN + shiftDown); gor++) {
-                isColumn &= (gameField[ver][gor] == dot);
-                isRow &= (gameField[gor][ver] == dot);
+            for (int horizontal = shiftDown; horizontal < (DOT_TO_WIN + shiftDown); horizontal++) {
+                isColumn &= (gameField[vertical][horizontal] == dot);
+                isRow &= (gameField[horizontal][vertical] == dot);
             }
             if (isColumn || isRow) return true;
         }
@@ -174,9 +183,9 @@ public class HomeWorkGame {
     }
 
     boolean checkWin(char dot) {
-        for (int ver = 0; ver < (fieldSizeY - DOT_TO_WIN + 1); ver++) {
-            for (int gor = 0; gor < (fieldSizeX - DOT_TO_WIN + 1); gor++) {
-                if (checkDiags(dot, ver, gor) || checkLines(dot, ver, gor)) return true;
+        for (int vertical = 0; vertical < (fieldSizeY - DOT_TO_WIN + 1); vertical++) {
+            for (int horizontal = 0; horizontal < (fieldSizeX - DOT_TO_WIN + 1); horizontal++) {
+                if (checkDiagonals(dot, vertical, horizontal) || checkLines(dot, vertical, horizontal)) return true;
             }
         }
         return false;

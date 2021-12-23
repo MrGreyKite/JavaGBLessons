@@ -13,7 +13,10 @@ public class Main {
         while (true) {
             ticTacToe.humanTurn();
             ticTacToe.printField();
-            if (ticTacToe.checkWinSimple(ticTacToe.HUMAN_DOT)) {
+    // Раскомментировать или закомментировать в зависимости от выбора способа проверки победы
+    //            if (ticTacToe.checkWinSimple(ticTacToe.HUMAN_DOT)) {
+    //или
+            if (ticTacToe.checkWin(ticTacToe.HUMAN_DOT)) {
                 System.out.println("Выиграл человек!");
                 break;
             }
@@ -21,9 +24,16 @@ public class Main {
                 System.out.println("Ничья!");
                 break;
             }
-            ticTacToe.AITurn(ticTacToe.coordinates);
+    // Раскомментировать или закомментировать в зависимости от выбора поведения ИскИна
+    //            ticTacToe.AITurn(ticTacToe.coordinates);
+    //или
+            ticTacToe.AITurnSimple();
             ticTacToe.printField();
-            if (ticTacToe.checkWinSimple(ticTacToe.AI_DOT)) {
+
+    // Раскомментировать или закомментировать в зависимости от выбора способа проверки победы
+    //            if (ticTacToe.checkWinSimple(ticTacToe.AI_DOT)) {
+    //или
+            if (ticTacToe.checkWin(ticTacToe.AI_DOT)) {
                 System.out.println("Выиграл компьютер!");
                 break;
             }
