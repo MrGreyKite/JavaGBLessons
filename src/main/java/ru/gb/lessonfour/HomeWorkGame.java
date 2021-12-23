@@ -69,13 +69,13 @@ public class HomeWorkGame {
         return coordinates = new int[]{x, y};
     }
 
+    //ИскИн делает ход в случайную клетку вокруг клетки человека
     void AITurn(int[] coordinates) {
         int x, y;
         do {
-            x = (coordinates[0] - 1) + RAND.nextInt((coordinates[0] + 1) - (coordinates[0] - 1) + 1);
-            y = (coordinates[1] - 1) + RAND.nextInt((coordinates[1] + 1) - (coordinates[1] - 1) + 1);
+            x = RAND.nextInt(fieldSizeX);
+            y = RAND.nextInt(fieldSizeY);
         } while (!(isCellValid(x, y)));
-        gameField[y][x] = AI_DOT;
         System.out.println("Компьютер сделал ход в точку " + (x + 1) + ", " + (y + 1));
     }
 
@@ -117,5 +117,37 @@ public class HomeWorkGame {
         return checkDiagonalsSimple(dot) || checkLinesSimple(dot);
     }
 
+    //Проверка выигрыша для поля произвольного размера: каждый раз проверяется квадрат "клеток" размера выигрышной последовательности,
+//и после проверки происходит смещение по полю, пока не будет достигнут край
+    boolean checkDiags(char dot, int shiftLeft, int shiftDown) {
+        boolean isDiagRight, isDiagLeft;
+        isDiagRight = isDiagLeft = true;
+        for (int i = 0; i < DOT_TO_WIN; i++) {
+            isDiagRight &= (gameField[i + shiftLeft][i + shiftDown] == dot);
+            isDiagLeft &= (gameField[DOT_TO_WIN - 1 - i + shiftLeft][i + shiftDown] == dot);
+        }
+        return (isDiagRight || isDiagLeft);
+    }
 
+    boolean checkLines(char dot, int shiftLeft, int shiftDown) {
+        boolean isColumn, isRow;
+        for (int ver = shiftLeft; ver < (DOT_TO_WIN + shiftLeft); ver++) {
+            isColumn = isRow = true;
+            for (int gor = shiftDown; gor < (DOT_TO_WIN + shiftDown); gor++) {
+                isColumn &= (gameField[ver][gor] == dot);
+                isRow &= (gameField[gor][ver] == dot);
+            }
+            if (isColumn || isRow) return true;
+        }
+        return false;
+    }
+
+    boolean checkWin(char dot) {
+        for (int ver = 0; ver < (fieldSizeY - DOT_TO_WIN + 1); ver++) {
+            for (int gor = 0; gor < (fieldSizeX - DOT_TO_WIN + 1); gor++) {
+                if (checkDiags(dot, ver, gor) || checkLines(dot, ver, gor)) return true;
+            }
+        }
+        return false;
+    }
 }
